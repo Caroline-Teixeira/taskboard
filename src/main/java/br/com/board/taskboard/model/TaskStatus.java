@@ -31,7 +31,7 @@ public class TaskStatus {
     private String name;
 
     @Column(nullable = false)
-    private int order;
+    private int priority;
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
