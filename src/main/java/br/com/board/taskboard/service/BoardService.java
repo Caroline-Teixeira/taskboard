@@ -1,6 +1,6 @@
 package br.com.board.taskboard.service;
 
-import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +13,7 @@ import br.com.board.taskboard.exception.TaskboardException;
 import br.com.board.taskboard.model.Board;
 
 import br.com.board.taskboard.repository.BoardRepository;
+import br.com.board.taskboard.util.DateUtil;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -38,8 +39,8 @@ public class BoardService {
         // cria o Board
         Board board = new Board();
         board.setName(name);
-        board.setCreatedAt(LocalDateTime.now());
-        board.setUpdatedAt(LocalDateTime.now());
+        board.setCreatedAt(DateUtil.now());
+        board.setUpdatedAt(DateUtil.now());
 
         board = boardRepository.save(board);
         

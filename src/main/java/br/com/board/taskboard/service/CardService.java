@@ -1,8 +1,9 @@
 package br.com.board.taskboard.service;
 
-import java.time.LocalDateTime;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import br.com.board.taskboard.dto.BlockHistoryDTO;
 import br.com.board.taskboard.dto.CardDTO;
@@ -18,8 +19,10 @@ import br.com.board.taskboard.repository.BoardRepository;
 import br.com.board.taskboard.repository.CardMovementRepository;
 import br.com.board.taskboard.repository.CardRepository;
 import br.com.board.taskboard.repository.TaskStatusRepository;
+import br.com.board.taskboard.util.DateUtil;
 import jakarta.transaction.Transactional;
 
+@Service
 public class CardService {
 
     private final CardRepository cardRepository;
@@ -57,7 +60,7 @@ public class CardService {
         Card card = new Card();
         card.setTitle(title);
         card.setDescription(description);
-        card.setCreatedAt(LocalDateTime.now());
+        card.setCreatedAt(DateUtil.now());
         card.setBlocked(false);
         card.setTaskStatus(initialStatus);
         card = cardRepository.save(card);
@@ -66,7 +69,7 @@ public class CardService {
         CardMovement movement = new CardMovement();
         movement.setCard(card);
         movement.setTaskStatus(initialStatus);
-        movement.setEntryDate(LocalDateTime.now());
+        movement.setEntryDate(DateUtil.now());
         cardMovementRepository.save(movement);
 
 
@@ -109,14 +112,14 @@ public class CardService {
         // Atualiza a movimentação atual do cartão
         CardMovement currentMovement = cardMovementRepository.findByCardAndExitDateIsNull(card)
                 .orElseThrow(() -> new TaskboardException("Nenhuma movimentação ativa encontrada para o cartão com ID: " + cardId));
-        currentMovement.setExitDate(LocalDateTime.now());
+        currentMovement.setExitDate(DateUtil.now());
         cardMovementRepository.save(currentMovement);
 
         // Cria uma nova movimentação para o cartão
         CardMovement newMovement = new CardMovement();
         newMovement.setCard(card);
         newMovement.setTaskStatus(targetStatus);
-        newMovement.setEntryDate(LocalDateTime.now());
+        newMovement.setEntryDate(DateUtil.now());
         cardMovementRepository.save(newMovement);
 
         // Atualiza o cartão com o novo status
@@ -160,7 +163,7 @@ public class CardService {
         // Cria o histórico de bloqueio - persistência
         BlockHistory blockHistory = new BlockHistory();
         blockHistory.setCard(card);
-        blockHistory.setBlockedDate(LocalDateTime.now());
+        blockHistory.setBlockedDate(DateUtil.now());
         blockHistory.setBlockedReason(blockReason);
         blockHistory = blockHistoryRepository.save(blockHistory);
 
@@ -169,9 +172,9 @@ public class CardService {
         blockHistoryDTO.setId(blockHistory.getId());
         blockHistoryDTO.setCardId(blockHistory.getCard().getId());
         blockHistoryDTO.setBlockDate(blockHistory.getBlockedDate());
-        blockHistoryDTO.setBlockReason(blockHistory.getBlockedReason());
-        blockHistoryDTO.setUnblockDate(blockHistory.getUnblockedDate());
-        blockHistoryDTO.setUnblockReason(blockHistory.getUnblockedReason());
+        blockHistoryDTO.setBlockedReason(blockHistory.getBlockedReason());
+        blockHistoryDTO.setUnblockedDate(blockHistory.getUnblockedDate());
+        blockHistoryDTO.setUnblockedReason(blockHistory.getUnblockedReason());
 
 
         return blockHistoryDTO;
@@ -200,7 +203,7 @@ public class CardService {
         // Atualiza o histórico de bloqueio
        BlockHistory blockHistory = blockHistoryRepository.findByCardAndUnblockDateIsNull(card)
                 .orElseThrow(() -> new TaskboardException("Nenhum histórico de bloqueio ativo encontrado para o cartão com ID: " + cardId));
-        blockHistory.setUnblockedDate(LocalDateTime.now());
+        blockHistory.setUnblockedDate(DateUtil.now());
         blockHistory.setUnblockedReason(unblockReason);
         blockHistoryRepository.save(blockHistory);
 
@@ -209,9 +212,9 @@ public class CardService {
         blockHistoryDTO.setId(blockHistory.getId());
         blockHistoryDTO.setCardId(blockHistory.getCard().getId());
         blockHistoryDTO.setBlockDate(blockHistory.getBlockedDate());
-        blockHistoryDTO.setBlockReason(blockHistory.getBlockedReason());
-        blockHistoryDTO.setUnblockDate(blockHistory.getUnblockedDate());
-        blockHistoryDTO.setUnblockReason(blockHistory.getUnblockedReason());
+        blockHistoryDTO.setBlockedReason(blockHistory.getBlockedReason());
+        blockHistoryDTO.setUnblockedDate(blockHistory.getUnblockedDate());
+        blockHistoryDTO.setUnblockedReason(blockHistory.getUnblockedReason());
 
         return blockHistoryDTO;
     }
