@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.board.taskboard.dto.TaskStatusDTO;
+import br.com.board.taskboard.exception.TaskboardException;
 import br.com.board.taskboard.model.Board;
 import br.com.board.taskboard.model.Status;
 import br.com.board.taskboard.model.TaskStatus;
@@ -31,20 +32,20 @@ public class TaskStatusService {
     @Transactional
     public void createMandatoryColumns(Board board) {
         if (board == null || board.getId() == null) {
-            throw new IllegalArgumentException("O quadro não pode ser nulo ou sem ID.");
+            throw new TaskboardException("O quadro não pode ser nulo ou sem ID.");
         }
 
         // Verifica se as colunas obrigatórias já existem
         if (taskStatusRepository.findByBoardAndStatus(board, Status.INICIAL).isPresent()){
-            throw new IllegalArgumentException("O quadro já possui coluna Inicial.");
+            throw new TaskboardException("O quadro já possui coluna Inicial.");
         }
 
         if (taskStatusRepository.findByBoardAndStatus(board, Status.FINAL).isPresent()){
-            throw new IllegalArgumentException("O quadro já possui coluna Final.");
+            throw new TaskboardException("O quadro já possui coluna Final.");
         }
 
         if (taskStatusRepository.findByBoardAndStatus(board, Status.CANCELADA).isPresent()){
-            throw new IllegalArgumentException("O quadro já possui coluna Cancelada.");    
+            throw new TaskboardException("O quadro já possui coluna Cancelada.");    
         }
 
         // Cria as colunas Iniciais
@@ -85,7 +86,7 @@ public class TaskStatusService {
     // Lista as colunas de um quadro
     public List<TaskStatusDTO> listColumns(Long boardId) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("Quadro não encontrado com o ID: " + boardId));
+                .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));
 
         List<TaskStatus> taskStatuses = taskStatusRepository.findByBoardOrderByPriority(board);
 
