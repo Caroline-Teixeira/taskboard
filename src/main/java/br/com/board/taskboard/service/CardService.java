@@ -264,7 +264,7 @@ public class CardService {
 
     // Atualiza o histórico de bloqueio
     BlockHistory blockHistory = blockHistoryRepository
-      .findByCardAndUnblockDateIsNull(card)
+      .findByCardAndUnblockedDateIsNull(card)
       .orElseThrow(() ->
         new TaskboardException(
           "Nenhum histórico de bloqueio ativo encontrado para o cartão com ID: " +

@@ -1,6 +1,7 @@
 package br.com.board.taskboard.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -11,10 +12,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Board {
 
     @Id
@@ -30,6 +37,8 @@ public class Board {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TaskStatus> taskStatuses;
+    @Builder.Default
+    private List<TaskStatus> taskStatuses = new ArrayList<>();
 
 }
+// builder.default serve para inicializar a lista de taskStatuses como uma lista vazia, evitando NullPointerException ao adicionar elementos a ela.

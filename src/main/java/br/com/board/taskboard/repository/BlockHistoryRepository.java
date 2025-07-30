@@ -12,7 +12,7 @@ import br.com.board.taskboard.model.Card;
 public interface BlockHistoryRepository extends JpaRepository<BlockHistory, Long>{
 
     List<BlockHistory> findByCard(Card card);
-    Optional<BlockHistory> findByCardAndUnblockDateIsNull(Card card);
-    List<BlockHistory> findByBoard (Board board);
+    Optional<BlockHistory> findByCardAndUnblockedDateIsNull(Card card);
+    List<BlockHistory> findByCardTaskStatusBoard(Board board);
 
 }

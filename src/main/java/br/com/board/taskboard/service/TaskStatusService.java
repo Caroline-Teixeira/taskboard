@@ -1,5 +1,6 @@
 package br.com.board.taskboard.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class TaskStatusService {
 
     // Cria as colunas obrigatórias para um quadro
     @Transactional
-    public void createMandatoryColumns(Board board) {
+    public List<TaskStatus> createMandatoryColumns(Board board) {
         if (board == null || board.getId() == null) {
             throw new TaskboardException("O quadro não pode ser nulo ou sem ID.");
         }
@@ -47,6 +48,8 @@ public class TaskStatusService {
         if (taskStatusRepository.findByBoardAndStatus(board, Status.CANCELADA).isPresent()){
             throw new TaskboardException("O quadro já possui coluna Cancelada.");    
         }
+
+        List<TaskStatus> taskStatuses = new ArrayList<>();
 
         // Cria as colunas Iniciais
         TaskStatus initialColumn = new TaskStatus();
@@ -80,6 +83,10 @@ public class TaskStatusService {
         cancelledColumn.setPriority(4); // Define a prioridade como 4
         taskStatusRepository.save(cancelledColumn);
 
+        // Adiciona as colunas à lista taskStatuses do Board
+        board.getTaskStatuses().addAll(taskStatuses);
+
+        return taskStatuses;
     }
 
 

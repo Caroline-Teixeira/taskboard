@@ -1,10 +1,10 @@
+
 package br.com.board.taskboard.view;
 
-import br.com.board.taskboard.dto.CardDTO;
+import br.com.board.taskboard.dto.BoardDTO;
 import br.com.board.taskboard.dto.CardMovementDTO;
 import br.com.board.taskboard.dto.TaskStatusDTO;
 import br.com.board.taskboard.exception.TaskboardException;
-import br.com.board.taskboard.model.Board;
 
 import br.com.board.taskboard.service.BlockHistoryService;
 import br.com.board.taskboard.service.BoardService;
@@ -14,7 +14,6 @@ import br.com.board.taskboard.service.TaskStatusService;
 import br.com.board.taskboard.util.ConsolePrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -46,34 +45,32 @@ public class Menu {
         while (true) {
             System.out.println("=== Menu do Taskboard ===");
             System.out.println("1. Criar Quadro");
-            System.out.println("2. Criar Colunas Obrigatórias");
-            System.out.println("3. Adicionar Cartão");
-            System.out.println("4. Mover Cartão");
-            System.out.println("5. Bloquear Cartão");
-            System.out.println("6. Desbloquear Cartão");
-            System.out.println("7. Listar Colunas do Quadro");
-            System.out.println("8. Listar Movimentações do Cartão");
-            System.out.println("9. Listar Histórico de Bloqueios");
-            System.out.println("10. Listar Bloqueios Ativos");
-            System.out.println("11. Sair");
+            System.out.println("2. Adicionar Cartão");
+            System.out.println("3. Mover Cartão");
+            System.out.println("4. Bloquear Cartão");
+            System.out.println("5. Desbloquear Cartão");
+            System.out.println("6. Listar Colunas do Quadro");
+            System.out.println("7. Listar Movimentações do Cartão");
+            System.out.println("8. Listar Histórico de Bloqueios");
+            System.out.println("9. Listar Bloqueios Ativos");
+            System.out.println("10. Sair");
             System.out.println("=========================");
-            System.out.print("Escolha uma opção (1-11): ");
+            System.out.print("Escolha uma opção (1-10): ");
 
             try {
                 String input = scanner.nextLine().trim();
                 int option = Integer.parseInt(input);
                 switch (option) {
                     case 1 -> createBoard();
-                    case 2 -> createMandatoryColumns();
-                    case 3 -> addCard();
-                    case 4 -> moveCard();
-                    case 5 -> blockCard();
-                    case 6 -> unblockCard();
-                    case 7 -> listColumns();
-                    case 8 -> listCardMovements();
-                    case 9 -> listBlockHistory();
-                    case 10 -> listActiveBlocks();
-                    case 11 -> {
+                    case 2 -> addCard();
+                    case 3 -> moveCard();
+                    case 4 -> blockCard();
+                    case 5 -> unblockCard();
+                    case 6 -> listColumns();
+                    case 7 -> listCardMovements();
+                    case 8 -> listBlockHistory();
+                    case 9 -> listActiveBlocks();
+                    case 10 -> {
                         ConsolePrinter.printWarning("Saindo...");
                         scanner.close();
                         return;
@@ -94,27 +91,8 @@ public class Menu {
                 ConsolePrinter.printError("Erro: O nome do quadro não pode ser vazio.");
                 return;
             }
-            Board board = new Board();
-            board.setName(name);
-            boardService.createBoard(name);
-            ConsolePrinter.printSuccess("Quadro '" + name + "' criado com sucesso.");
-        } catch (TaskboardException e) {
-            ConsolePrinter.printError("Erro: " + e.getMessage());
-        }
-    }
-
-    private void createMandatoryColumns() {
-        try {
-            System.out.print("Digite o ID do quadro: ");
-            Long boardId = scanner.nextLong();
-            scanner.nextLine();
-            Board board = new Board();
-            board.setId(boardId);
-            taskStatusService.createMandatoryColumns(board);
-            ConsolePrinter.printSuccess("Colunas obrigatórias criadas para o quadro ID " + boardId + ".");
-        } catch (InputMismatchException e) {
-            ConsolePrinter.printError("Erro: Digite apenas números válidos!");
-            scanner.nextLine();
+            BoardDTO boardDTO = boardService.createBoard(name);
+            ConsolePrinter.printSuccess("Quadro '" + name + "' criado com sucesso. ID: " + boardDTO.getId());
         } catch (TaskboardException e) {
             ConsolePrinter.printError("Erro: " + e.getMessage());
         }
@@ -124,10 +102,8 @@ public class Menu {
         try {
             System.out.print("Digite o ID do quadro: ");
             Long boardId = scanner.nextLong();
-            System.out.print("Digite o ID da coluna: ");
-            Long taskStatusId = scanner.nextLong();
-            System.out.print("Digite o título do cartão: ");
             scanner.nextLine();
+            System.out.print("Digite o título do cartão: ");
             String title = scanner.nextLine().trim();
             System.out.print("Digite a descrição do cartão: ");
             String description = scanner.nextLine().trim();
@@ -135,13 +111,8 @@ public class Menu {
                 ConsolePrinter.printError("Erro: O título do cartão não pode ser vazio.");
                 return;
             }
-            CardDTO cardDTO = new CardDTO();
-            cardDTO.setTitle(title);
-            cardDTO.setDescription(description);
-            cardDTO.setId(boardId);
-            cardDTO.setTaskStatusId(taskStatusId);
             cardService.createCard(boardId, title, description);
-            ConsolePrinter.printSuccess("Cartão '" + title + "' adicionado com sucesso.");
+            ConsolePrinter.printSuccess("Cartão '" + title + "' adicionado com sucesso à coluna Inicial.");
         } catch (InputMismatchException e) {
             ConsolePrinter.printError("Erro: Digite apenas números válidos!");
             scanner.nextLine();

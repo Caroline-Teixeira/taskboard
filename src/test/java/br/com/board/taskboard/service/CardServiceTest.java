@@ -313,7 +313,7 @@ class CardServiceTest {
         blockHistory.setBlockedReason("Motivo X");
 
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
-        when(blockHistoryRepository.findByCardAndUnblockDateIsNull(card)).thenReturn(Optional.of(blockHistory));
+        when(blockHistoryRepository.findByCardAndUnblockedDateIsNull(card)).thenReturn(Optional.of(blockHistory));
         when(cardRepository.save(any(Card.class))).thenReturn(card);
         when(blockHistoryRepository.save(any(BlockHistory.class))).thenReturn(blockHistory);
         try (MockedStatic<DateUtil> dateUtil = Mockito.mockStatic(DateUtil.class)) {
@@ -328,7 +328,7 @@ class CardServiceTest {
             assertEquals(now, result.getUnblockedDate());
             assertEquals(unblockReason, result.getUnblockedReason());
             verify(cardRepository).findById(cardId);
-            verify(blockHistoryRepository).findByCardAndUnblockDateIsNull(card);
+            verify(blockHistoryRepository).findByCardAndUnblockedDateIsNull(card);
             verify(cardRepository).save(any(Card.class));
             verify(blockHistoryRepository).save(any(BlockHistory.class));
         }

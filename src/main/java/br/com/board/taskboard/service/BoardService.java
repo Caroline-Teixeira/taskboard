@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 import br.com.board.taskboard.dto.BoardDTO;
 import br.com.board.taskboard.exception.TaskboardException;
 import br.com.board.taskboard.model.Board;
-
+import br.com.board.taskboard.model.TaskStatus;
 import br.com.board.taskboard.repository.BoardRepository;
+
 import br.com.board.taskboard.util.DateUtil;
 import jakarta.transaction.Transactional;
 
@@ -21,11 +22,14 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final TaskStatusService taskStatusService;
+    
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, TaskStatusService taskStatusService) {
+    public BoardService(BoardRepository boardRepository, TaskStatusService taskStatusService 
+                        ) {
         this.boardRepository = boardRepository;
         this.taskStatusService = taskStatusService;
+        
     }
 
     // MÉTODOS
@@ -38,14 +42,15 @@ public class BoardService {
 
         // cria o Board
         Board board = new Board();
-        board.setName(name);
+        board.setName(name.trim());
         board.setCreatedAt(DateUtil.now());
         board.setUpdatedAt(DateUtil.now());
 
         board = boardRepository.save(board);
         
         // Colunas obrigatórias
-        taskStatusService.createMandatoryColumns(board);
+        List<TaskStatus> taskStatuses = taskStatusService.createMandatoryColumns(board);
+
 
         // acessa board e converte para DTO
         BoardDTO boardDTO = new BoardDTO();
@@ -53,7 +58,7 @@ public class BoardService {
         boardDTO.setName(board.getName());
         boardDTO.setCreatedAt(board.getCreatedAt());
         boardDTO.setUpdatedAt(board.getUpdatedAt());
-        boardDTO.setTaskStatusIds(board.getTaskStatuses().stream()
+        boardDTO.setTaskStatusIds(taskStatuses.stream()
                 .map(taskStatus -> taskStatus.getId())
                 .collect(Collectors.toList()));
         

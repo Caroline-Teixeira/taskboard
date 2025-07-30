@@ -76,7 +76,7 @@ class BlockHistoryServiceTest {
         List<BlockHistory> histories = Arrays.asList(history1, history2);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(blockHistoryRepository.findByBoard(board)).thenReturn(histories);
+        when(blockHistoryRepository.findByCardTaskStatusBoard(board)).thenReturn(histories);
         try (MockedStatic<DateUtil> dateUtil = mockStatic(DateUtil.class)) {
             dateUtil.when(() -> DateUtil.calculateHours(blockedDate1, unblockedDate1)).thenReturn(2.0);
             dateUtil.when(() -> DateUtil.calculateHours(blockedDate2, null)).thenReturn(0.0);
@@ -104,7 +104,7 @@ class BlockHistoryServiceTest {
             assertEquals(0.0, result2.get("blockedDuration"));
 
             verify(boardRepository).findById(boardId);
-            verify(blockHistoryRepository).findByBoard(board);
+            verify(blockHistoryRepository).findByCardTaskStatusBoard(board);
             verifyNoInteractions(cardRepository);
         }
     }
@@ -223,13 +223,13 @@ class BlockHistoryServiceTest {
         board.setId(boardId);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(blockHistoryRepository.findByBoard(board)).thenReturn(Collections.emptyList());
+        when(blockHistoryRepository.findByCardTaskStatusBoard(board)).thenReturn(Collections.emptyList());
 
         List<Map<String, Object>> result = blockHistoryService.cardBlockHistory(boardId, null);
 
         assertTrue(result.isEmpty());
         verify(boardRepository).findById(boardId);
-        verify(blockHistoryRepository).findByBoard(board);
+        verify(blockHistoryRepository).findByCardTaskStatusBoard(board);
         verifyNoInteractions(cardRepository);
     }
 
@@ -292,7 +292,7 @@ class BlockHistoryServiceTest {
         List<BlockHistory> histories = Arrays.asList(history1, history2);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(blockHistoryRepository.findByBoard(board)).thenReturn(histories);
+        when(blockHistoryRepository.findByCardTaskStatusBoard(board)).thenReturn(histories);
         try (MockedStatic<DateUtil> dateUtil = mockStatic(DateUtil.class)) {
             dateUtil.when(() -> DateUtil.calculateHours(blockedDate1, null)).thenReturn(0.0);
 
@@ -309,7 +309,7 @@ class BlockHistoryServiceTest {
             assertEquals(0.0, result1.get("blockedDuration"));
 
             verify(boardRepository).findById(boardId);
-            verify(blockHistoryRepository).findByBoard(board);
+            verify(blockHistoryRepository).findByCardTaskStatusBoard(board);
             verifyNoInteractions(cardRepository);
         }
     }
@@ -351,13 +351,13 @@ class BlockHistoryServiceTest {
         List<BlockHistory> histories = Arrays.asList(history);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(blockHistoryRepository.findByBoard(board)).thenReturn(histories);
+        when(blockHistoryRepository.findByCardTaskStatusBoard(board)).thenReturn(histories);
 
         List<Map<String, Object>> result = blockHistoryService.activeBlocksByBoard(boardId);
 
         assertTrue(result.isEmpty());
         verify(boardRepository).findById(boardId);
-        verify(blockHistoryRepository).findByBoard(board);
+        verify(blockHistoryRepository).findByCardTaskStatusBoard(board);
         verifyNoInteractions(cardRepository);
     }
 
@@ -368,13 +368,13 @@ class BlockHistoryServiceTest {
         board.setId(boardId);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(blockHistoryRepository.findByBoard(board)).thenReturn(Collections.emptyList());
+        when(blockHistoryRepository.findByCardTaskStatusBoard(board)).thenReturn(Collections.emptyList());
 
         List<Map<String, Object>> result = blockHistoryService.activeBlocksByBoard(boardId);
 
         assertTrue(result.isEmpty());
         verify(boardRepository).findById(boardId);
-        verify(blockHistoryRepository).findByBoard(board);
+        verify(blockHistoryRepository).findByCardTaskStatusBoard(board);
         verifyNoInteractions(cardRepository);
     }
 }

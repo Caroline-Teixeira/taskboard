@@ -73,7 +73,7 @@ class CardMovementServiceTest {
         List<CardMovement> movements = Arrays.asList(movement1, movement2);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(cardMovementRepository.findByBoard(board)).thenReturn(movements);
+        when(cardMovementRepository.findByCardTaskStatusBoard(board)).thenReturn(movements);
         try (MockedStatic<DateUtil> dateUtil = mockStatic(DateUtil.class)) {
             dateUtil.when(() -> DateUtil.calculateHours(entryDate1, exitDate1)).thenReturn(2.0);
             dateUtil.when(() -> DateUtil.calculateHours(entryDate2, null)).thenReturn(0.0);
@@ -99,7 +99,7 @@ class CardMovementServiceTest {
             assertEquals(0.0, result2.get("timeInHours"));
 
             verify(boardRepository).findById(boardId);
-            verify(cardMovementRepository).findByBoard(board);
+            verify(cardMovementRepository).findByCardTaskStatusBoard(board);
         }
     }
 
@@ -123,13 +123,13 @@ class CardMovementServiceTest {
         board.setId(boardId);
 
         when(boardRepository.findById(boardId)).thenReturn(Optional.of(board));
-        when(cardMovementRepository.findByBoard(board)).thenReturn(Collections.emptyList());
+        when(cardMovementRepository.findByCardTaskStatusBoard(board)).thenReturn(Collections.emptyList());
 
         List<Map<String, Object>> result = cardMovementService.cardTimeInColumn(boardId);
 
         assertTrue(result.isEmpty());
         verify(boardRepository).findById(boardId);
-        verify(cardMovementRepository).findByBoard(board);
+        verify(cardMovementRepository).findByCardTaskStatusBoard(board);
     }
 
     @Test

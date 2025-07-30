@@ -52,7 +52,7 @@ public class BlockHistoryService {
             blockHistories = blockHistoryRepository.findByCard(card);
         } else 
         {
-            blockHistories = blockHistoryRepository.findByBoard(board);
+            blockHistories = blockHistoryRepository.findByCardTaskStatusBoard(board);
         }
 
         return blockHistories.stream()
@@ -79,7 +79,7 @@ public class BlockHistoryService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));
 
-        List<BlockHistory> blockHistories = blockHistoryRepository.findByBoard(board);
+        List<BlockHistory> blockHistories = blockHistoryRepository.findByCardTaskStatusBoard(board);
         return blockHistories.stream()
                 .filter(history -> history.getUnblockedDate() == null)
                 .map(history -> {

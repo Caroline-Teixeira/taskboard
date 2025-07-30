@@ -41,7 +41,7 @@ public class CardMovementService {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));
 
-        List<CardMovement> movements = cardMovementRepository.findByBoard(board);
+        List<CardMovement> movements = cardMovementRepository.findByCardTaskStatusBoard(board);
         return movements.stream()
         .map(movement -> {
             Map<String, Object> result = new HashMap<>();

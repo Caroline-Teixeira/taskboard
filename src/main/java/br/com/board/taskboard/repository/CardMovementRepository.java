@@ -13,6 +13,6 @@ public interface CardMovementRepository extends JpaRepository<CardMovement, Long
 
     List<CardMovement> findByCard(Card card);
     Optional<CardMovement> findByCardAndExitDateIsNull(Card card);
-    List<CardMovement> findByBoard (Board board);
+    List<CardMovement> findByCardTaskStatusBoard(Board board);
 
 }

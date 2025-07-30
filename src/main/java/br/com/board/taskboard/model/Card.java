@@ -37,5 +37,6 @@ public class Card {
     @JoinColumn(name = "task_status_id")
     private TaskStatus taskStatus;
 
+    
 
 }
