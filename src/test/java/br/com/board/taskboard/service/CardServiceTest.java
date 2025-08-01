@@ -24,9 +24,11 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -357,5 +359,40 @@ class CardServiceTest {
         assertEquals("O cartão não está bloqueado. ID do cartão: " + cardId, exception.getMessage());
         verify(cardRepository).findById(cardId);
         verifyNoInteractions(blockHistoryRepository);
+    }
+
+    @Test
+    void deleteCard_ValidCardId_DeletesCard() {
+        Long cardId = 1L;
+        Card card = new Card();
+        card.setId(cardId);
+        card.setTitle("Tarefa Teste");
+        TaskStatus taskStatus = new TaskStatus();
+        taskStatus.setId(2L);
+        card.setTaskStatus(taskStatus);
+        card.setMovements(new ArrayList<>());
+        card.setBlockHistories(new ArrayList<>());
+
+        when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
+        doNothing().when(cardRepository).delete(card);
+
+        cardService.deleteCard(cardId);
+
+        verify(cardRepository).findById(cardId);
+        verify(cardRepository).delete(card);
+        verifyNoInteractions(taskStatusRepository, cardMovementRepository, blockHistoryRepository);
+    }
+
+    @Test
+    void deleteCard_CardNotFound_ThrowsTaskboardException() {
+        Long cardId = 1L;
+        when(cardRepository.findById(cardId)).thenReturn(Optional.empty());
+
+        TaskboardException exception = assertThrows(TaskboardException.class,
+                () -> cardService.deleteCard(cardId));
+        assertEquals("Cartão não encontrado com o ID: " + cardId, exception.getMessage());
+        verify(cardRepository).findById(cardId);
+        verify(cardRepository, never()).delete(any(Card.class));
+        verifyNoInteractions(taskStatusRepository, cardMovementRepository, blockHistoryRepository);
     }
 }

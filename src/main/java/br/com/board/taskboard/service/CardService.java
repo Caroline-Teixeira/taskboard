@@ -15,18 +15,25 @@ import br.com.board.taskboard.repository.CardMovementRepository;
 import br.com.board.taskboard.repository.CardRepository;
 import br.com.board.taskboard.repository.TaskStatusRepository;
 import br.com.board.taskboard.util.DateUtil;
+
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+
+
 @Service
 public class CardService {
+  
 
   private final CardRepository cardRepository;
   private final TaskStatusRepository taskStatusRepository;
   private final CardMovementRepository cardMovementRepository;
   private final BlockHistoryRepository blockHistoryRepository;
   private final BoardRepository boardRepository;
+
+  
 
   @Autowired
   public CardService(
@@ -288,12 +295,31 @@ public class CardService {
   }
 
   @Transactional
-  public void deleteCard(Long cardId) {
-    Card card = cardRepository
+    public void deleteCard(Long cardId) {
+        Card card = cardRepository
                 .findById(cardId)
-                .orElseThrow(() ->
-                        new TaskboardException("Cartão não encontrado com o ID: " + cardId)
-                );
-        cardRepository.delete(card);
-  }
+                .orElseThrow(() -> new TaskboardException("Cartão não encontrado com o ID: " + cardId));
+
+        if (card.isBlocked()) {
+            throw new TaskboardException("O cartão está bloqueado e não pode ser deletado. ID: " + cardId);
+        }
+
+        try {
+            // Remover o cartão da coleção de TaskStatus primeiro
+            TaskStatus taskStatus = card.getTaskStatus();
+            taskStatus.getCards().removeIf(cardItem -> cardItem.getId().equals(cardId));
+            taskStatusRepository.saveAndFlush(taskStatus); // Forçar o commit da coleção
+            // Deletar registros dependentes
+            cardMovementRepository.deleteByCardId(cardId);
+            cardMovementRepository.flush();
+            blockHistoryRepository.deleteByCardId(cardId);
+            blockHistoryRepository.flush();
+            // Deletar o cartão
+            cardRepository.deleteById(cardId);
+            cardRepository.flush();
+        } catch (Exception e) {
+            throw new TaskboardException("Erro ao deletar cartão: " + e.getMessage());
+        }
+    }
+
 }

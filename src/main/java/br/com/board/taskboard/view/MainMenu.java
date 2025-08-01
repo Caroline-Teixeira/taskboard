@@ -46,7 +46,7 @@ public class MainMenu {
                 String input = scanner.nextLine().trim();
                 int option = Integer.parseInt(input);
                 switch (option) {
-                     case 1 -> boardMenu.createBoard();
+                    case 1 -> boardMenu.createBoard();
                     case 2 -> cardMenu.addCard();
                     case 3 -> cardMenu.deleteCard();
                     case 4 -> cardActionsMenu.moveCard();
