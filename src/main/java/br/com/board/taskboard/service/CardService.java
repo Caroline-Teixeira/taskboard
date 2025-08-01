@@ -286,4 +286,14 @@ public class CardService {
 
     return blockHistoryDTO;
   }
+
+  @Transactional
+  public void deleteCard(Long cardId) {
+    Card card = cardRepository
+                .findById(cardId)
+                .orElseThrow(() ->
+                        new TaskboardException("Cartão não encontrado com o ID: " + cardId)
+                );
+        cardRepository.delete(card);
+  }
 }
