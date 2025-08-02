@@ -13,3 +13,4 @@ public class AppConfig {
         return new Scanner(System.in);
     }
 }
+//for menu

@@ -32,12 +32,6 @@ public class BlockHistoryService {
         this.cardRepository = cardRepository;
     }
 
-    /**
-     * Gera um relatório do histórico de bloqueios de cartões em um board ou de um cartão específico.
-     * param boardId ID do board.
-     * param cardId ID do cartão (opcional, pode ser nulo para todos os cartões).
-     * return Lista de mapas com ID, cartão, datas, motivos e duração do bloqueio.
-     */
     public List<Map<String, Object>> cardBlockHistory(Long boardId, Long cardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));
@@ -70,11 +64,6 @@ public class BlockHistoryService {
         }).collect(Collectors.toList());
     }
 
-    /**
-     * Lista os bloqueios ativos (sem data de desbloqueio) de cartões em um board.
-     * param boardId ID do board.
-     * return Lista de mapas com ID, cartão, datas, motivos e duração do bloqueio ativo.
-     */
     public List<Map<String, Object>> activeBlocksByBoard(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));

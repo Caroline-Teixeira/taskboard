@@ -29,7 +29,7 @@ public class TaskStatusService {
         this.boardRepository = boardRepository;
     }
 
-    // Cria as colunas obrigatórias para um quadro
+    
     @Transactional
     public List<TaskStatus> createMandatoryColumns(Board board) {
         if (board == null || board.getId() == null) {
@@ -51,7 +51,7 @@ public class TaskStatusService {
 
         List<TaskStatus> taskStatuses = new ArrayList<>();
 
-        // Cria as colunas Iniciais
+        
         TaskStatus initialColumn = new TaskStatus();
         initialColumn.setName("A Fazer");
         initialColumn.setStatus(Status.INICIAL);
@@ -59,7 +59,7 @@ public class TaskStatusService {
         initialColumn.setPriority(1); // Define a prioridade como 1
         taskStatusRepository.save(initialColumn);
 
-        // Cria as colunas pendentes
+        
         TaskStatus pendingColumn = new TaskStatus();
         pendingColumn.setName("Em progresso");
         pendingColumn.setStatus(Status.PENDENTE);
@@ -67,7 +67,7 @@ public class TaskStatusService {
         pendingColumn.setPriority(2); // Define a prioridade como 2
         taskStatusRepository.save(pendingColumn);
 
-        // Cria as colunas finais
+       
         TaskStatus finalColumn = new TaskStatus();
         finalColumn.setName("Concluído");
         finalColumn.setStatus(Status.FINAL);
@@ -75,7 +75,7 @@ public class TaskStatusService {
         finalColumn.setPriority(3); // Define a prioridade como 3
         taskStatusRepository.save(finalColumn);
 
-        // Cria as colunas canceladas
+       
         TaskStatus cancelledColumn = new TaskStatus();
         cancelledColumn.setName("Cancelado");
         cancelledColumn.setStatus(Status.CANCELADA);
@@ -90,7 +90,6 @@ public class TaskStatusService {
     }
 
 
-    // Lista as colunas de um quadro
     public List<TaskStatusDTO> listColumns(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));

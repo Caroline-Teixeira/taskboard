@@ -41,4 +41,3 @@ public class Board {
     private List<TaskStatus> taskStatuses = new ArrayList<>();
 
 }
-// builder.default serve para inicializar a lista de taskStatuses como uma lista vazia, evitando NullPointerException ao adicionar elementos a ela.

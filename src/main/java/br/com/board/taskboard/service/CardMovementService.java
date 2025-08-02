@@ -32,11 +32,6 @@ public class CardMovementService {
         this.cardRepository = cardRepository;
     }
 
-    /**
-     * Gera um relatório do tempo que cada cartão passou em cada coluna de um board.
-     * param boardId ID do board.
-     * return Lista de mapas com ID da movimentação, cartão, coluna, datas e tempo em horas.
-     */
     public List<Map<String, Object>> cardTimeInColumn(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + boardId));
@@ -56,11 +51,6 @@ public class CardMovementService {
         }).collect(Collectors.toList());
     }
 
-    /**
-     * Lista todas as movimentações de um cartão.
-     * param cardId ID do cartão.
-     * return Lista de movimentações do cartão.
-     */
     public List<CardMovementDTO> listMovements(Long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new TaskboardException("Cartão não encontrado com o ID: " + cardId));

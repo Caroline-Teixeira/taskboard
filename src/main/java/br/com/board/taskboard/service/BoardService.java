@@ -32,15 +32,14 @@ public class BoardService {
         
     }
 
-    // MÉTODOS
-    // novo quadro
+
     @Transactional
     public BoardDTO createBoard(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new TaskboardException("O nome do quadro não pode ser vazio.");
         }
 
-        // cria o Board
+        
         Board board = new Board();
         board.setName(name.trim());
         board.setCreatedAt(DateUtil.now());
@@ -48,11 +47,9 @@ public class BoardService {
 
         board = boardRepository.save(board);
         
-        // Colunas obrigatórias
         List<TaskStatus> taskStatuses = taskStatusService.createMandatoryColumns(board);
 
 
-        // acessa board e converte para DTO
         BoardDTO boardDTO = new BoardDTO();
         boardDTO.setId(board.getId());
         boardDTO.setName(board.getName());
@@ -65,7 +62,7 @@ public class BoardService {
         return boardDTO;
     }
 
-    // lista todos os quadros
+   
     public List<BoardDTO> getAllBoards() {
         List<Board> boards = boardRepository.findAll();
         return boards.stream()
@@ -83,7 +80,7 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
-    // busca um quadro por ID
+   
     public BoardDTO getBoardById(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new TaskboardException("Quadro não encontrado com o ID: " + id));

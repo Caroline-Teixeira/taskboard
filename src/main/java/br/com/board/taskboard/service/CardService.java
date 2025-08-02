@@ -50,7 +50,7 @@ public class CardService {
     this.boardRepository = boardRepository;
   }
 
-  //cartão por ID
+  
   @Transactional
     public CardDTO findById(Long cardId) {
         Card card = cardRepository
@@ -72,7 +72,7 @@ public class CardService {
         return cardDTO;
     }
 
-  // criar cartão
+
   @Transactional
   public CardDTO createCard(Long boardId, String title, String description) {
     if (title == null || title.isEmpty()) {
@@ -92,7 +92,7 @@ public class CardService {
         )
       );
 
-    // Cria o cartão para persistência
+    
     Card card = new Card();
     card.setTitle(title);
     card.setDescription(description);
@@ -101,14 +101,14 @@ public class CardService {
     card.setTaskStatus(initialStatus);
     card = cardRepository.save(card);
 
-    // movimenta o cartão
+    
     CardMovement movement = new CardMovement();
     movement.setCard(card);
     movement.setTaskStatus(initialStatus);
     movement.setEntryDate(DateUtil.now());
     cardMovementRepository.save(movement);
 
-    // Cria o DTO para retorno no menu
+    
     CardDTO cardDTO = new CardDTO();
     cardDTO.setId(card.getId());
     cardDTO.setTitle(card.getTitle());
@@ -122,7 +122,7 @@ public class CardService {
     return cardDTO;
   }
 
-  // mover cartão
+
   @Transactional
   public CardDTO moveCard(Long cardId, Long targetStatusId) {
     Card card = cardRepository
@@ -131,7 +131,7 @@ public class CardService {
         new TaskboardException("Cartão não encontrado com o ID: " + cardId)
       );
 
-    // Verifica se o cartão está bloqueado
+    
     if (card.isBlocked()) {
       throw new TaskboardException(
         "O cartão está bloqueado e não pode ser movido. ID do cartão: " + cardId
@@ -147,7 +147,7 @@ public class CardService {
         )
       );
 
-    // Verifica se o status de destino é válido
+    
     if (!currentStatus.getBoard().getId().equals(targetStatus.getBoard().getId())) {
             throw new TaskboardException(
                     "A coluna de destino não pertence ao mesmo quadro do cartão."
@@ -164,7 +164,6 @@ public class CardService {
       );
     }
 
-    // Atualiza a movimentação atual do cartão
     CardMovement currentMovement = cardMovementRepository
       .findByCardAndExitDateIsNull(card)
       .orElseThrow(() ->
@@ -176,18 +175,18 @@ public class CardService {
     currentMovement.setExitDate(DateUtil.now());
     cardMovementRepository.save(currentMovement);
 
-    // Cria uma nova movimentação para o cartão
+  
     CardMovement newMovement = new CardMovement();
     newMovement.setCard(card);
     newMovement.setTaskStatus(targetStatus);
     newMovement.setEntryDate(DateUtil.now());
     cardMovementRepository.save(newMovement);
 
-    // Atualiza o cartão com o novo status
+  
     card.setTaskStatus(targetStatus);
     card = cardRepository.save(card);
 
-    // Cria o DTO para retorno no menu
+   
     CardDTO cardDTO = new CardDTO();
     cardDTO.setId(card.getId());
     cardDTO.setTitle(card.getTitle());
@@ -201,13 +200,13 @@ public class CardService {
     return cardDTO;
   }
 
-  // cartão bloqueado
+  
   @Transactional
   public BlockHistoryDTO blockCard(Long cardId, String blockReason) {
     if (blockReason == null || blockReason.trim().isEmpty()) {
       throw new TaskboardException("Motivo do bloqueio não pode ser vazio");
     }
-    // Verifica se o cartão existe
+    
     Card card = cardRepository
       .findById(cardId)
       .orElseThrow(() ->
@@ -220,19 +219,19 @@ public class CardService {
       );
     }
 
-    // Bloqueia o cartão
+    
     card.setBlocked(true);
     card.setBlockedReason(blockReason);
     card = cardRepository.save(card);
 
-    // Cria o histórico de bloqueio - persistência
+    
     BlockHistory blockHistory = new BlockHistory();
     blockHistory.setCard(card);
     blockHistory.setBlockedDate(DateUtil.now());
     blockHistory.setBlockedReason(blockReason);
     blockHistory = blockHistoryRepository.save(blockHistory);
 
-    // Cria o DTO para retorno no menu
+    
     BlockHistoryDTO blockHistoryDTO = new BlockHistoryDTO();
     blockHistoryDTO.setId(blockHistory.getId());
     blockHistoryDTO.setCardId(blockHistory.getCard().getId());
@@ -244,14 +243,13 @@ public class CardService {
     return blockHistoryDTO;
   }
 
-  // desbloquear cartão
+
   @Transactional
   public BlockHistoryDTO unblockCard(Long cardId, String unblockReason) {
     if (unblockReason == null || unblockReason.trim().isEmpty()) {
       throw new TaskboardException("Motivo do desbloqueio não pode ser vazio");
     }
 
-    // Verifica se o cartão existe
     Card card = cardRepository
       .findById(cardId)
       .orElseThrow(() ->
@@ -264,12 +262,11 @@ public class CardService {
       );
     }
 
-    // Desbloqueia o cartão
     card.setBlocked(false);
     card.setUnblockedReason(unblockReason);
     card = cardRepository.save(card);
 
-    // Atualiza o histórico de bloqueio
+    
     BlockHistory blockHistory = blockHistoryRepository
       .findByCardAndUnblockedDateIsNull(card)
       .orElseThrow(() ->
@@ -282,7 +279,7 @@ public class CardService {
     blockHistory.setUnblockedReason(unblockReason);
     blockHistoryRepository.save(blockHistory);
 
-    // Cria o DTO para retorno no menu
+    
     BlockHistoryDTO blockHistoryDTO = new BlockHistoryDTO();
     blockHistoryDTO.setId(blockHistory.getId());
     blockHistoryDTO.setCardId(blockHistory.getCard().getId());
@@ -305,16 +302,16 @@ public class CardService {
         }
 
         try {
-            // Remover o cartão da coleção de TaskStatus primeiro
+            
             TaskStatus taskStatus = card.getTaskStatus();
             taskStatus.getCards().removeIf(cardItem -> cardItem.getId().equals(cardId));
             taskStatusRepository.saveAndFlush(taskStatus); // Forçar o commit da coleção
-            // Deletar registros dependentes
+         
             cardMovementRepository.deleteByCardId(cardId);
             cardMovementRepository.flush();
             blockHistoryRepository.deleteByCardId(cardId);
             blockHistoryRepository.flush();
-            // Deletar o cartão
+            
             cardRepository.deleteById(cardId);
             cardRepository.flush();
         } catch (Exception e) {

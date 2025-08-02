@@ -93,7 +93,7 @@ public class ListOptionsMenu {
                 return;
             }
 
-            // map para exibir o histórico de bloqueios
+            
             ConsolePrinter.printInfo("Histórico de bloqueios:");
             for (Map<String, Object> history : blockHistories) {
                 System.out.println("ID: " + history.get("id") + ", Cartão ID: " + history.get("cardId") +

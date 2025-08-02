@@ -41,8 +41,6 @@ public class TaskStatus {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    // mappedBy significa que a relação é gerenciada pela entidade Card
-    // cascade = CascadeType.ALL permite que operações de persistência sejam propagadas
     @OneToMany(mappedBy = "taskStatus", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Card> cards;
 
