@@ -151,8 +151,8 @@ mvn spring-boot:run
 ## 🛠️ Tecnologias Utilizadas
 
 - **Java 21**
-- **Spring Boot 3.x**
-- **Maven 3.9.x**
+- **Spring Boot 3.5.4**
+- **Maven 3.9.6**
 - **MySQL 8** 
 - **Spring Data JPA** 
 - **Jakarta Transactions** para gerenciamento de transações
